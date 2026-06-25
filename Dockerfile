@@ -49,17 +49,16 @@ COPY . .
 # Run npm build (Vite)
 RUN npm run build
 
-# Run composer post-install scripts
+# Run composer post-install scripts (no artisan here - env vars not available at build time)
 RUN composer run-script post-autoload-dump --no-interaction || true
-
-# Cache Laravel config/routes/views
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache \
-    && php artisan storage:link
 
 # Expose port
 EXPOSE 8000
 
-# Start command: migrate + serve
-CMD php artisan migrate --seed --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+# Start: env vars are available here, so cache config/routes/views, link storage, migrate, then serve
+CMD php artisan storage:link --force \
+    && php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache \
+    && php artisan migrate --seed --force \
+    && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}

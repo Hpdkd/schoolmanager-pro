@@ -16,7 +16,7 @@ RUN apk add --no-cache \
     libzip-dev \
     oniguruma-dev
 
-# Install PHP extensions
+# Install PHP extensions (tokenizer & fileinfo & opcache are bundled in PHP 8.3)
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         pdo \
@@ -26,10 +26,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         zip \
         gd \
         intl \
-        tokenizer \
-        fileinfo \
         bcmath \
-        opcache
+    && docker-php-ext-enable opcache
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

@@ -5,6 +5,9 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\GradeController;
 use Illuminate\Support\Facades\Route;
 
+// Railway healthcheck - no auth, no DB, no redirect
+Route::get('/health', fn() => response('OK', 200));
+
 // Page d'accueil → rediriger vers dashboard
 Route::get('/', fn() => redirect()->route('dashboard'));
 

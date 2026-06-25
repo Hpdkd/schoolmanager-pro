@@ -52,11 +52,16 @@ RUN npm run build
 # Run composer post-install scripts (no artisan here - env vars not available at build time)
 RUN composer run-script post-autoload-dump --no-interaction || true
 
-# Make startup script executable
-RUN chmod +x /app/start.sh
+# Write startup script with guaranteed Unix line endings (no Windows CRLF issues)
+RUN printf '#!/bin/sh\n\
+php artisan storage:link --force || true\n\
+php artisan config:cache || true\n\
+php artisan route:cache || true\n\
+php artisan view:cache || true\n\
+php artisan migrate --force &\n\
+exec php artisan serve --host=0.0.0.0 --port=${PORT:-8000}\n' > /app/entrypoint.sh \
+    && chmod +x /app/entrypoint.sh
 
-# Expose port
 EXPOSE 8000
 
-# Use startup script: starts server immediately, migrations run in background
-CMD ["/bin/sh", "/app/start.sh"]
+CMD ["/bin/sh", "/app/entrypoint.sh"]

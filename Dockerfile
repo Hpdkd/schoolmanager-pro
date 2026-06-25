@@ -52,13 +52,11 @@ RUN npm run build
 # Run composer post-install scripts (no artisan here - env vars not available at build time)
 RUN composer run-script post-autoload-dump --no-interaction || true
 
+# Make startup script executable
+RUN chmod +x /app/start.sh
+
 # Expose port
 EXPOSE 8000
 
-# Start: env vars are available here, so cache config/routes/views, link storage, migrate, then serve
-CMD php artisan storage:link --force \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache \
-    && php artisan migrate --seed --force \
-    && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+# Use startup script: starts server immediately, migrations run in background
+CMD ["/bin/sh", "/app/start.sh"]

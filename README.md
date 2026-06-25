@@ -1,58 +1,79 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎓 SchoolManager Pro
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Plateforme de gestion scolaire complète — Laravel 13 · PHP 8.3 · MySQL · Vite 8
 
-## About Laravel
+**🌐 [DEMO LIVE](https://schoolmanager-pro-production.up.railway.app)**
+**Identifiants démo :** `admin@school.com` / `password`
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Fonctionnalités
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Module | Description |
+|--------|-------------|
+| 🏠 **Dashboard analytique** | KPIs temps réel, graphiques de performance, top élèves |
+| 👥 **Gestion des élèves** | Fiches complètes, inscriptions, historique académique |
+| 📝 **Saisie des notes** | Saisie en masse par classe/matière/semestre |
+| 📊 **Classements** | Classement automatique S1 & S2 avec moyennes pondérées |
+| 📄 **Bulletins PDF** | Génération automatique de bulletins officiels |
+| 📈 **Export Excel** | Export des résultats par classe en format .xlsx |
 
-## Learning Laravel
+## 🛠️ Stack technique
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Backend** : Laravel 13 · PHP 8.3 · MySQL 8
+- **Frontend** : Blade · Tailwind CSS · Vite 8 · Chart.js
+- **Auth** : Laravel Breeze (session-based)
+- **PDF** : Laravel DomPDF
+- **Deploy** : Railway (Docker · CI/CD GitHub)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## 🚀 Installation locale
 
 ```bash
-composer require laravel/boost --dev
+git clone https://github.com/Hpdkd/schoolmanager-pro.git
+cd schoolmanager-pro
 
-php artisan boost:install
+composer install
+npm install && npm run build
+
+cp .env.example .env
+php artisan key:generate
+
+# Configurer DB dans .env puis :
+php artisan migrate --seed
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Accès : `http://localhost:8000` · `admin@school.com` / `password`
 
-## Contributing
+## 🐳 Déploiement Railway
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Le projet est prêt pour Railway avec :
+- `Dockerfile` optimisé PHP 8.3 + Node 20
+- `railway.json` avec healthcheck sur `/health`
+- Variables d'environnement via Railway reference variables
 
-## Code of Conduct
+## 📁 Structure
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
+app/
+  Http/Controllers/
+    DashboardController.php   # KPIs & statistiques
+    StudentController.php     # CRUD élèves + bulletins PDF
+    GradeController.php       # Notes, classements, exports
+resources/views/
+  dashboard/     # Tableau de bord
+  students/      # Gestion élèves
+  grades/        # Notes & résultats
+database/
+  migrations/    # Schéma complet
+  seeders/       # 100 élèves + 1400+ notes de démo
+```
 
-## Security Vulnerabilities
+## 👨‍💻 Auteur
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Hp** · Développeur Laravel Full-Stack
+- Upwork : [profil](https://upwork.com)
+- Email : hyppolitedakodo@gmail.com
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+*Projet portfolio — déployé sur Railway · Code source disponible*

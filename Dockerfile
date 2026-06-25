@@ -16,7 +16,7 @@ RUN apk add --no-cache \
     libzip-dev \
     oniguruma-dev
 
-# Install PHP extensions (tokenizer & fileinfo & opcache are bundled in PHP 8.3)
+# Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         pdo \
@@ -32,7 +32,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Set working directory
 WORKDIR /app
 
 # Copy composer files first (layer caching)
@@ -46,19 +45,31 @@ RUN npm ci
 # Copy all application files
 COPY . .
 
-# Run npm build (Vite)
+# Build frontend assets
 RUN npm run build
 
-# Run composer post-install scripts (no artisan here - env vars not available at build time)
+# Run composer post-install scripts
 RUN composer run-script post-autoload-dump --no-interaction || true
 
-# Write startup script with guaranteed Unix line endings (no Windows CRLF issues)
+# Create all required Laravel directories (many are in .gitignore and won't be in repo)
+RUN mkdir -p \
+    /app/storage/framework/cache/data \
+    /app/storage/framework/sessions \
+    /app/storage/framework/views \
+    /app/storage/framework/testing \
+    /app/storage/logs \
+    /app/storage/app/public \
+    /app/bootstrap/cache \
+    && chmod -R 775 /app/storage /app/bootstrap/cache \
+    && chown -R www-data:www-data /app/storage /app/bootstrap/cache || true
+
+# Write startup script with guaranteed Unix LF line endings via printf
 RUN printf '#!/bin/sh\n\
-php artisan storage:link --force || true\n\
-php artisan config:cache || true\n\
-php artisan route:cache || true\n\
-php artisan view:cache || true\n\
-php artisan migrate --force &\n\
+php artisan storage:link --force 2>&1 || true\n\
+php artisan config:cache 2>&1 || true\n\
+php artisan route:cache 2>&1 || true\n\
+php artisan view:cache 2>&1 || true\n\
+php artisan migrate --force 2>&1 &\n\
 exec php artisan serve --host=0.0.0.0 --port=${PORT:-8000}\n' > /app/entrypoint.sh \
     && chmod +x /app/entrypoint.sh
 
